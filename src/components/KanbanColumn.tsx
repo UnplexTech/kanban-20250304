@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import KanbanCard from './KanbanCard';
@@ -10,7 +9,7 @@ interface KanbanColumnProps {
   index: number;
   addCard: (columnId: string, title: string) => void;
   deleteCard: (columnId: string, cardId: string) => void;
-  editCard: (columnId: string, cardId: string, title: string, description?: string) => void;
+  editCard: (columnId: string, cardId: string, title: string, description?: string, user?: string, responsibilities?: string[]) => void;
 }
 
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ 

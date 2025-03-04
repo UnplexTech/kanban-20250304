@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import KanbanColumn from './KanbanColumn';
@@ -10,6 +9,8 @@ export interface CardType {
   id: string;
   title: string;
   description?: string;
+  user?: string;
+  responsibilities?: string[];
 }
 
 export interface ColumnType {
@@ -27,22 +28,46 @@ const defaultData: ColumnType[] = [
     id: 'column-1',
     title: 'To Do',
     cards: [
-      { id: 'card-1', title: 'Create design system', description: 'Define colors, typography and components' },
-      { id: 'card-2', title: 'Implement drag and drop', description: 'Use react-beautiful-dnd for smooth interactions' },
+      { 
+        id: 'card-1', 
+        title: 'Create design system', 
+        description: 'Define colors, typography and components',
+        user: 'Sarah Chen',
+        responsibilities: ['UI Design', 'Documentation']
+      },
+      { 
+        id: 'card-2', 
+        title: 'Implement drag and drop', 
+        description: 'Use react-beautiful-dnd for smooth interactions',
+        user: 'Mike Johnson',
+        responsibilities: ['Frontend Development']
+      },
     ],
   },
   {
     id: 'column-2',
     title: 'In Progress',
     cards: [
-      { id: 'card-3', title: 'Build UI components', description: 'Create the visual elements of the application' },
+      { 
+        id: 'card-3', 
+        title: 'Build UI components', 
+        description: 'Create the visual elements of the application',
+        user: 'Alex Wong',
+        responsibilities: ['Component Development', 'Testing']
+      },
     ],
   },
   {
     id: 'column-3',
     title: 'Done',
     cards: [
-      { id: 'card-4', title: 'Project setup', description: 'Initialize the project and install dependencies' },
+      { 
+        id: 'card-4', 
+        title: 'Project setup', 
+        description: 'Initialize the project and install dependencies',
+        user: 'Taylor Swift',
+        responsibilities: ['Project Setup', 'Dependency Management']
+      },
     ],
   },
 ];
@@ -151,7 +176,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ initialData = defaultData }) 
   };
 
   // Edit a card in a column
-  const editCard = (columnId: string, cardId: string, title: string, description?: string) => {
+  const editCard = (columnId: string, cardId: string, title: string, description?: string, user?: string, responsibilities?: string[]) => {
     setColumns(
       columns.map(col => 
         col.id === columnId 
@@ -159,7 +184,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ initialData = defaultData }) 
               ...col, 
               cards: col.cards.map(card => 
                 card.id === cardId 
-                  ? { ...card, title, description } 
+                  ? { ...card, title, description, user, responsibilities } 
                   : card
               ) 
             } 

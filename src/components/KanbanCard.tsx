@@ -2,14 +2,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { CardType } from './KanbanBoard';
-import { X, Edit2, CheckSquare, Trash2 } from 'lucide-react';
+import { X, Edit2, CheckSquare, Trash2, User } from 'lucide-react';
 
 interface KanbanCardProps {
   card: CardType;
   index: number;
   columnId: string;
   deleteCard: (columnId: string, cardId: string) => void;
-  editCard: (columnId: string, cardId: string, title: string, description?: string) => void;
+  editCard: (columnId: string, cardId: string, title: string, description?: string, user?: string, responsibilities?: string[]) => void;
 }
 
 const KanbanCard: React.FC<KanbanCardProps> = ({ 
@@ -22,6 +22,8 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description || '');
+  const [user, setUser] = useState(card.user || '');
+  const [responsibilitiesString, setResponsibilitiesString] = useState(card.responsibilities?.join(', ') || '');
   const [showActions, setShowActions] = useState(false);
   const outsideRef = useRef<HTMLDivElement>(null);
 
@@ -40,7 +42,18 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
 
   const handleSave = () => {
     if (title.trim()) {
-      editCard(columnId, card.id, title, description.trim() || undefined);
+      const responsibilities = responsibilitiesString
+        ? responsibilitiesString.split(',').map(item => item.trim()).filter(Boolean)
+        : undefined;
+        
+      editCard(
+        columnId, 
+        card.id, 
+        title, 
+        description.trim() || undefined,
+        user.trim() || undefined,
+        responsibilities
+      );
       setIsEditing(false);
     }
   };
@@ -67,6 +80,20 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
             placeholder="Add a more detailed description..."
             className="w-full p-2 rounded border border-input bg-background focus:outline-none focus:ring-1 focus:ring-primary resize-none text-sm"
             rows={3}
+          />
+          <input
+            type="text"
+            value={user}
+            onChange={(e) => setUser(e.target.value)}
+            placeholder="Assign to user..."
+            className="w-full p-2 rounded border border-input bg-background focus:outline-none focus:ring-1 focus:ring-primary text-sm"
+          />
+          <input
+            type="text"
+            value={responsibilitiesString}
+            onChange={(e) => setResponsibilitiesString(e.target.value)}
+            placeholder="Responsibilities (comma separated)..."
+            className="w-full p-2 rounded border border-input bg-background focus:outline-none focus:ring-1 focus:ring-primary text-sm"
           />
           <div className="flex justify-end gap-2 pt-1">
             <button 
@@ -107,6 +134,28 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
           {card.description && (
             <div className="text-xs text-muted-foreground mt-1 line-clamp-2">
               {card.description}
+            </div>
+          )}
+          
+          {/* User section */}
+          {card.user && (
+            <div className="flex items-center mt-2 gap-1.5">
+              <User className="w-3 h-3 text-primary/70" />
+              <span className="text-xs font-medium">{card.user}</span>
+            </div>
+          )}
+          
+          {/* Responsibilities section */}
+          {card.responsibilities && card.responsibilities.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {card.responsibilities.map((resp, idx) => (
+                <span 
+                  key={idx} 
+                  className="px-1.5 py-0.5 bg-accent/80 text-accent-foreground rounded-sm text-[10px] font-medium"
+                >
+                  {resp}
+                </span>
+              ))}
             </div>
           )}
           
